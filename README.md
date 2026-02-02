@@ -54,9 +54,26 @@ log_auto_report/
 - 集計結果を CSV 形式で出力
 - 集計結果をグラフ（PNG）として可視化
 
+※ 不正な行（price/quantityが数値でない、dateが解析できない等）は自動で除外して集計します。
+
 ---
 
 ## 出力内容
+
+## 出力構成（実行後）
+
+実行すると、output 配下にタイムスタンプ付きフォルダが生成されます。
+
+output/
+  └─ report_YYYYMMDD_HHMMSS/
+       ├─ merged_sales.csv
+       ├─ daily_sales.csv
+       ├─ product_sales.csv
+       ├─ top5_products.csv
+       ├─ daily_sales.png
+       └─ top5_products.png
+
+※ 毎回内容が変わるため、出力結果は Git 管理していません。
 
 ### CSV
 - `parsed_logs.csv`：パース後のログ一覧

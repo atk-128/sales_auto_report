@@ -1,3 +1,4 @@
+import argparse
 import glob
 import os
 from datetime import datetime
@@ -8,13 +9,26 @@ import matplotlib.pyplot as plt
 INPUT_DIR = "input"
 OUTPUT_DIR = "output"
 
+def make_run_dir(base_dir):
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_dir = os.path.join(base_dir, f"report_{ts}")
+    os.makedirs(run_dir, exist_ok=True)
+    return run_dir
 
-def ensure_dirs():
-    os.makedirs(INPUT_DIR, exist_ok=True)
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+def parse_args():
+    parser = argparse.ArgumentParser(description="Sales CSV -> Auto Report")
+    parser.add_argument("--input-dir", default=INPUT_DIR, help="Input folder path (default: input)")
+    parser.add_argument("--output-dir", default=OUTPUT_DIR, help="Output folder path (default: output)")
+    parser.add_argument("--top", type=int, default=5, help="Top N products (default: 5)")
+    return parser.parse_args()
 
 
-def find_csv_files():
+def ensure_dirs(input_dir: str, output_dir: str):
+    os.makedirs(input_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
+
+
+def find_csv_files(input_dir):
     files = glob.glob(os.path.join(INPUT_DIR, "*.csv"))
     if not files:
         raise FileNotFoundError(f"CSVが見つかりません: {INPUT_DIR} に .csv を入れてください")
@@ -23,27 +37,45 @@ def find_csv_files():
 
 def load_and_concat_csv(files):
     dfs = []
+
     for f in files:
         df = pd.read_csv(f)
+
+        # ✅ 必須列チェック
+        required_cols = {"date", "product", "price", "quantity"}
+        missing = required_cols - set(df.columns)
+        if missing:
+            raise ValueError(
+                f"{os.path.basename(f)} に必須列がありません: {missing}"
+            )
+
+        # ✅ 数値変換（壊れてる行は落とす）
+        df["price"] = pd.to_numeric(df["price"], errors="coerce")
+        df["quantity"] = pd.to_numeric(df["quantity"], errors="coerce")
+        df = df[df["price"].notna() & df["quantity"].notna()]
+
+        # 元ファイル名を保持（デバッグ用）
         df["source_file"] = os.path.basename(f)
+
         dfs.append(df)
 
+    # 🔽 ここからは「全CSV結合後」の処理
     df_all = pd.concat(dfs, ignore_index=True)
 
     # date を datetime に
     df_all["date"] = pd.to_datetime(df_all["date"], errors="coerce")
     df_all = df_all[df_all["date"].notna()]
 
-    # 売上列を作る
-    df_all["sales"] = df_all["price"] * df_all["quantity"]
+    # 売上列
+    df_all["sales"] = (df_all["price"] * df_all["quantity"]).round(2)
 
-    # 出力用に date を日付だけへ
+    # 日付だけに整形
     df_all["date"] = df_all["date"].dt.date
 
     return df_all
 
 
-def summarize(df_all):
+def summarize(df_all, top_n: int = 5):
     daily = (
         df_all.groupby("date", as_index=False)["sales"]
         .sum()
@@ -56,18 +88,18 @@ def summarize(df_all):
         .sort_values("sales", ascending=False)
     )
 
-    top5 = product.head(5)
-    return daily, product, top5
+    topn = product.head(top_n)
+    return daily, product, topn
 
 
-def export_csv(df_all, daily, product, top5):
-    df_all.to_csv(os.path.join(OUTPUT_DIR, "merged_sales.csv"), index=False)
-    daily.to_csv(os.path.join(OUTPUT_DIR, "daily_sales.csv"), index=False)
-    product.to_csv(os.path.join(OUTPUT_DIR, "product_sales.csv"), index=False)
-    top5.to_csv(os.path.join(OUTPUT_DIR, "top5_products.csv"), index=False)
+def export_csv(output_dir: str, df_all, daily, product, top5):
+    df_all.to_csv(os.path.join(output_dir, "merged_sales.csv"), index=False)
+    daily.to_csv(os.path.join(output_dir, "daily_sales.csv"), index=False)
+    product.to_csv(os.path.join(output_dir, "product_sales.csv"), index=False)
+    top5.to_csv(os.path.join(output_dir, "top5_products.csv"), index=False)
 
 
-def export_graphs(daily, top5):
+def export_graphs(output_dir: str, daily, top5):
     # 日別売上（折れ線）
     daily_sorted = daily.sort_values("date")
     plt.figure(figsize=(10, 5))
@@ -76,37 +108,36 @@ def export_graphs(daily, top5):
     plt.xlabel("Date")
     plt.ylabel("Sales")
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, "daily_sales.png"), dpi=200)
+    plt.savefig(os.path.join(output_dir, "daily_sales.png"), dpi=200)
     plt.close()
 
-    # TOP5（棒）
+    # TOP（棒）
     top5_sorted = top5.sort_values("sales", ascending=False)
     plt.figure(figsize=(10, 5))
     plt.bar(top5_sorted["product"], top5_sorted["sales"])
-    plt.title("Top 5 Products by Sales")
+    plt.title("Top Products by Sales")
     plt.xlabel("Product")
     plt.ylabel("Sales")
     plt.tight_layout()
-    plt.savefig(os.path.join(OUTPUT_DIR, "top5_products.png"), dpi=200)
+    plt.savefig(os.path.join(output_dir, "top5_products.png"), dpi=200)
     plt.close()
 
 
 def main():
     ensure_dirs()
 
+    run_dir = make_run_dir(OUTPUT_DIR)
+
     files = find_csv_files()
     df_all = load_and_concat_csv(files)
 
     daily, product, top5 = summarize(df_all)
 
-    export_csv(df_all, daily, product, top5)
-    export_graphs(daily, top5)
+    export_csv(df_all, daily, product, top5, run_dir)
+    export_graphs(daily, top5, run_dir)
 
     print("✅ 完了")
-    print("処理CSV数:", len(files))
-    print("対象行数:", len(df_all))
-    print("出力先:", OUTPUT_DIR)
-    print("生成ファイル: merged_sales.csv / daily_sales.csv / product_sales.csv / top5_products.csv / daily_sales.png / top5_products.png")
+    print("出力先:", run_dir)
 
 
 if __name__ == "__main__":
