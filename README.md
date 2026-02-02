@@ -77,20 +77,17 @@ output/
 
 ※ 毎回内容が変わるため、出力結果は Git 管理していません。
 
-### CSV
-- `parsed_logs.csv`：パース後のログ一覧
-- `daily_counts.csv`：日別ログ件数
-- `level_counts.csv`：ログレベル別件数
-- `top_messages.csv`：頻出メッセージ上位
+## CSV出力内容
 
-## グラフ
+- `merged_sales.csv`：全CSVを結合した売上データ
+- `daily_sales.csv`：日別売上集計
+- `product_sales.csv`：商品別売上集計
+- `top5_products.csv`：売上上位N商品の一覧
 
-### 日別売上
-![Daily Sales](output/daily_sales.png)
+## グラフ出力
 
-### 売上TOP5
-![Top 5 Products by Sales](output/top5_products.png)
-
+- 日別売上推移：`daily_sales.png`
+- 売上TOP商品：`top5_products.png`
 ---
 
 ## 使い方
