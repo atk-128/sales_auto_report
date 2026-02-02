@@ -27,12 +27,14 @@
 
 ## フォルダ構成
 
-log_auto_report/
-├─ input/      # 解析対象のログファイル（.log / .txt）
+```text
+sales_auto_report/
+├─ input/      # 売上CSVファイル（date, product, price, quantity）
 ├─ output/     # 集計結果（CSV / PNG）
 ├─ main.py     # メインスクリプト
 ├─ .gitignore
 └─ README.md
+```
 
 ---
 
