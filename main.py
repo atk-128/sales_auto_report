@@ -41,12 +41,23 @@ def load_and_concat_csv(files):
     for f in files:
         df = pd.read_csv(f)
 
-        # ✅ 必須列チェック
-        required_cols = {"date", "product", "price", "quantity"}
-        missing = required_cols - set(df.columns)
+        # ✅ 必須列チェック（親切版）
+        required_cols = ["date", "product", "price", "quantity"]
+        missing = [c for c in required_cols if c not in df.columns]
+
         if missing:
+            example = "date,product,price,quantity\n2026-02-01,Apple,120,3"
             raise ValueError(
-                f"{os.path.basename(f)} に必須列がありません: {missing}"
+                "\n".join([
+                    "CSVの列が不足しています。",
+                    f"ファイル: {os.path.basename(f)}",
+                    f"不足列: {missing}",
+                    f"必要列: {required_cols}",
+                    f"現在の列: {list(df.columns)}",
+                    "",
+                    "✅ CSVヘッダー例:",
+                    example,
+                ])
             )
 
         # ✅ 数値変換（壊れてる行は落とす）
@@ -54,12 +65,10 @@ def load_and_concat_csv(files):
         df["quantity"] = pd.to_numeric(df["quantity"], errors="coerce")
         df = df[df["price"].notna() & df["quantity"].notna()]
 
-        # 元ファイル名を保持（デバッグ用）
         df["source_file"] = os.path.basename(f)
-
         dfs.append(df)
 
-    # 🔽 ここからは「全CSV結合後」の処理
+    # 🔽 ここからは「全CSV結合後」の処理（forの外）
     df_all = pd.concat(dfs, ignore_index=True)
 
     # date を datetime に
@@ -73,7 +82,6 @@ def load_and_concat_csv(files):
     df_all["date"] = df_all["date"].dt.date
 
     return df_all
-
 
 def summarize(df_all, top_n: int = 5):
     daily = (
