@@ -105,8 +105,36 @@ input/app.log
 ### 2. 実行
 
 ```bash
-python3 main.py
+python3 main.py --top 10
 ```
+
+## 引数一覧（オプション）
+
+このスクリプトは、実行時に引数を指定することで挙動を変更できます。
+
+- `--input-dir`：入力CSVのフォルダ（デフォルト：`input`）
+- `--output-dir`：出力先フォルダ（デフォルト：`output`）
+- `--top`：売上上位の表示件数（デフォルト：`5`）
+
+### 使用例
+
+```bash
+# デフォルト設定で実行
+python3 main.py
+
+# Top10商品を出力
+python3 main.py --top 10
+
+# 入力・出力フォルダを指定
+python3 main.py --input-dir data --output-dir result
+
+## 引数（オプション）
+
+このツールは、入力フォルダ・出力フォルダ・Top件数を引数で変更できます。
+
+### 例（全部指定）
+```bash
+python3 main.py --input-dir input --output-dir output --top 5
 
 ---
 
