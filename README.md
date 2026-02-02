@@ -64,6 +64,7 @@ log_auto_report/
 
 実行すると、output 配下にタイムスタンプ付きフォルダが生成されます。
 
+```text
 output/
   └─ report_YYYYMMDD_HHMMSS/
        ├─ merged_sales.csv
@@ -72,6 +73,7 @@ output/
        ├─ top5_products.csv
        ├─ daily_sales.png
        └─ top5_products.png
+```
 
 ※ 毎回内容が変わるため、出力結果は Git 管理していません。
 
