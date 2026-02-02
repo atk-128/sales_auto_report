@@ -1,0 +1,7 @@
+date,product,price,quantity,source_file,sales
+2026-02-01,Apple,120,3,sales_sample.csv,360
+2026-02-01,Banana,80,5,sales_sample.csv,400
+2026-02-02,Apple,120,2,sales_sample.csv,240
+2026-02-02,Orange,100,4,sales_sample.csv,400
+2026-02-03,Banana,80,1,sales_sample.csv,80
+2026-02-03,Orange,100,2,sales_sample.csv,200
