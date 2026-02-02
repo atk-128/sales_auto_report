@@ -86,8 +86,12 @@ output/
 
 ## グラフ出力
 
-- 日別売上推移：`daily_sales.png`
-- 売上TOP商品：`top5_products.png`
+### 日別売上
+![Daily Sales](output/report_20260202_184001/daily_sales.png)
+
+### 売上TOP5
+![Top5 Products](output/report_20260202_184001/top5_products.png)
+
 ---
 
 ## 使い方
