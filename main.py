@@ -99,7 +99,7 @@ def export_csv(df_all, daily, product, top5, run_dir):
     top5.to_csv(os.path.join(run_dir, "top5_products.csv"), index=False)
 
 
-def export_graphs(daily, top5, out_dir: str):
+def export_graphs(daily, top5, run_dir: str):
     daily_sorted = daily.sort_values("date")
     plt.figure(figsize=(10, 5))
     plt.plot(daily_sorted["date"], daily_sorted["sales"], marker="o")
@@ -107,7 +107,7 @@ def export_graphs(daily, top5, out_dir: str):
     plt.xlabel("Date")
     plt.ylabel("Sales")
     plt.tight_layout()
-    plt.savefig(os.path.join(out_dir, "daily_sales.png"), dpi=200)
+    plt.savefig(os.path.join(run_dir, "daily_sales.png"), dpi=200)
     plt.close()
 
     top5_sorted = top5.sort_values("sales", ascending=False)
@@ -117,7 +117,7 @@ def export_graphs(daily, top5, out_dir: str):
     plt.xlabel("Product")
     plt.ylabel("Sales")
     plt.tight_layout()
-    plt.savefig(os.path.join(out_dir, "top5_products.png"), dpi=200)
+    plt.savefig(os.path.join(run_dir, "top5_products.png"), dpi=200)
     plt.close()
 
 
