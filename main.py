@@ -16,10 +16,25 @@ def make_run_dir(base_dir):
     return run_dir
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Sales CSV -> Auto Report")
-    parser.add_argument("--input-dir", default=INPUT_DIR, help="Input folder path (default: input)")
-    parser.add_argument("--output-dir", default=OUTPUT_DIR, help="Output folder path (default: output)")
-    parser.add_argument("--top", type=int, default=5, help="Top N products (default: 5)")
+    parser = argparse.ArgumentParser(
+        description="売上CSV → 自動レポート（Sales CSV → Auto Report）"
+    )
+    parser.add_argument(
+        "--input-dir",
+        default=INPUT_DIR,
+        help="入力CSVのフォルダ（デフォルト：input）",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default=OUTPUT_DIR,
+        help="出力先フォルダ（デフォルト：output）",
+    )
+    parser.add_argument(
+        "--top",
+        type=int,
+        default=5,
+        help="売上上位の表示件数（デフォルト：5）",
+    )
     return parser.parse_args()
 
 
