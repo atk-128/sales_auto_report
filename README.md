@@ -59,13 +59,13 @@ log_auto_report/
 - `level_counts.csv`：ログレベル別件数
 - `top_messages.csv`：頻出メッセージ上位
 
-### グラフ
+## グラフ
 
-#### 日別ログ件数
-![日別ログ件数](output/daily_counts.png)
+### 日別売上
+![](./output/daily_sales.png)
 
-#### ログレベル別件数
-![ログレベル別件数](output/level_counts.png)
+### 売上TOP5
+![](./output/top5_products.png)
 
 ---
 
