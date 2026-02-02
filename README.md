@@ -90,16 +90,8 @@ python3 main.py
 
 ---
 
-## ✅ 今やる作業（迷わない版）
-
-1. **VSCodeで `README.md` を開く**
-2. **今入っている1行を全削除**
-3. **↑のREADME全文をコピペ**
-4. **保存（Cmd + S）**
-5. ターミナルで👇
-
-```bash
-git add README.md
-git commit -m "Add full README for log auto report"
-git push
-```
+	•	概要
+	•	フォルダ構成
+	•	使い方（input → 実行）
+	•	Before / After
+	•	出力されるファイル・グラフ
