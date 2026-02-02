@@ -60,19 +60,19 @@ log_auto_report/
 
 ## 出力内容
 
-## 出力構成（実行後）
+## 出力例（実行後）
 
-実行すると、output 配下にタイムスタンプ付きフォルダが生成されます。
+実行すると、output 配下にタイムスタンプ付きフォルダが作成されます。
 
 ```text
 output/
-  └─ report_YYYYMMDD_HHMMSS/
-       ├─ merged_sales.csv
-       ├─ daily_sales.csv
-       ├─ product_sales.csv
-       ├─ top5_products.csv
-       ├─ daily_sales.png
-       └─ top5_products.png
+└─ report_YYYYMMDD_HHMMSS/
+   ├─ merged_sales.csv
+   ├─ daily_sales.csv
+   ├─ product_sales.csv
+   ├─ top5_products.csv
+   ├─ daily_sales.png
+   └─ top5_products.png
 ```
 
 ※ 毎回内容が変わるため、出力結果は Git 管理していません。
