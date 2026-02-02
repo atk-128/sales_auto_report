@@ -29,9 +29,9 @@ def ensure_dirs(input_dir: str, output_dir: str):
 
 
 def find_csv_files(input_dir):
-    files = glob.glob(os.path.join(INPUT_DIR, "*.csv"))
+    files = glob.glob(os.path.join(input_dir, "*.csv"))
     if not files:
-        raise FileNotFoundError(f"CSVが見つかりません: {INPUT_DIR} に .csv を入れてください")
+        raise FileNotFoundError(f"CSVが見つかりません: {input_dir} に .csv を入れてください")
     return files
 
 
@@ -92,15 +92,14 @@ def summarize(df_all, top_n: int = 5):
     return daily, product, topn
 
 
-def export_csv(output_dir: str, df_all, daily, product, top5):
-    df_all.to_csv(os.path.join(output_dir, "merged_sales.csv"), index=False)
-    daily.to_csv(os.path.join(output_dir, "daily_sales.csv"), index=False)
-    product.to_csv(os.path.join(output_dir, "product_sales.csv"), index=False)
-    top5.to_csv(os.path.join(output_dir, "top5_products.csv"), index=False)
+def export_csv(df_all, daily, product, top5, run_dir):
+    df_all.to_csv(os.path.join(run_dir, "merged_sales.csv"), index=False)
+    daily.to_csv(os.path.join(run_dir, "daily_sales.csv"), index=False)
+    product.to_csv(os.path.join(run_dir, "product_sales.csv"), index=False)
+    top5.to_csv(os.path.join(run_dir, "top5_products.csv"), index=False)
 
 
-def export_graphs(output_dir: str, daily, top5):
-    # 日別売上（折れ線）
+def export_graphs(daily, top5, out_dir: str):
     daily_sorted = daily.sort_values("date")
     plt.figure(figsize=(10, 5))
     plt.plot(daily_sorted["date"], daily_sorted["sales"], marker="o")
@@ -108,10 +107,9 @@ def export_graphs(output_dir: str, daily, top5):
     plt.xlabel("Date")
     plt.ylabel("Sales")
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "daily_sales.png"), dpi=200)
+    plt.savefig(os.path.join(out_dir, "daily_sales.png"), dpi=200)
     plt.close()
 
-    # TOP（棒）
     top5_sorted = top5.sort_values("sales", ascending=False)
     plt.figure(figsize=(10, 5))
     plt.bar(top5_sorted["product"], top5_sorted["sales"])
@@ -119,16 +117,18 @@ def export_graphs(output_dir: str, daily, top5):
     plt.xlabel("Product")
     plt.ylabel("Sales")
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "top5_products.png"), dpi=200)
+    plt.savefig(os.path.join(out_dir, "top5_products.png"), dpi=200)
     plt.close()
 
 
 def main():
-    ensure_dirs()
+    args = parse_args()
 
-    run_dir = make_run_dir(OUTPUT_DIR)
+    ensure_dirs(args.input_dir, args.output_dir)
 
-    files = find_csv_files()
+    run_dir = make_run_dir(args.output_dir)
+
+    files = find_csv_files(args.input_dir)
     df_all = load_and_concat_csv(files)
 
     daily, product, top5 = summarize(df_all)
