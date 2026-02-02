@@ -67,10 +67,10 @@ log_auto_report/
 ## グラフ
 
 ### 日別売上
-![](./output/daily_sales.png)
+![Daily Sales](output/daily_sales.png)
 
 ### 売上TOP5
-![](./output/top5_products.png)
+![Top 5 Products by Sales](output/top5_products.png)
 
 ---
 
